@@ -18,7 +18,7 @@ export default class DrawingApp extends React.Component {
     };
 
     this.pointsToSend = [];
-	this.pointId = 0;
+    this.pointId = 0;
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
