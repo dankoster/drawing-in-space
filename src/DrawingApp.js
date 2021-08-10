@@ -18,6 +18,7 @@ export default class DrawingApp extends React.Component {
     };
 
     this.pointsToSend = [];
+    this.pointId = 0;
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -54,6 +55,7 @@ export default class DrawingApp extends React.Component {
       // points in one flat array.
       if (this.state.justStarted && this.state.points.length > 0) {
         newPoints.push({
+          id: this.pointId++,
           x: null,
           y: null,
           isEndOfSegment: true,
@@ -62,6 +64,7 @@ export default class DrawingApp extends React.Component {
 
       // Append a new point to the array
       const newPoint = {
+        id: this.pointId++,
         x: ev.nativeEvent.offsetX,
         y: ev.nativeEvent.offsetY,
         isEndOfSegment: false,
@@ -82,6 +85,7 @@ export default class DrawingApp extends React.Component {
 
   reset() {
     this.setState({ points: [], confirmedPoints: [], justStarted: true });
+    this.pointId = 0
     this.state.server.reset();
   }
 
@@ -89,6 +93,9 @@ export default class DrawingApp extends React.Component {
     this.state.server
       .getPoints()
       .then((confirmedPoints) => {
+        //make sure the points are sorted into the correct order
+        confirmedPoints.sort((a, b) => a.id - b.id)
+        this.pointId = confirmedPoints.length
         this.setState({ points: confirmedPoints, confirmedPoints });
       })
       .catch((error) => {
@@ -97,17 +104,20 @@ export default class DrawingApp extends React.Component {
   }
 
   sendPoints() {
+	//console.log('sending', this.pointsToSend)
     // And send to the "remote" server
     this.state.server
       .addPoints(this.pointsToSend)
       .then((confirmedPoints) => {
-        // Success
+		//console.log('confirmed', confirmedPoints)
+		// points may come back from the server out of order because of latency, so we have added an id to each point
+		// so we can always sort them into the same order. (Array.sort sorts the array in place)
         this.setState({
-          confirmedPoints: this.state.confirmedPoints.concat(confirmedPoints),
+          confirmedPoints: this.state.confirmedPoints.concat(confirmedPoints).sort((a, b) => a.id - b.id),
         });
       })
       .catch((error) => {
-        // Failure
+        console.error(error)
       });
 
     this.pointsToSend = [];
