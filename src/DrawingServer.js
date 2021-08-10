@@ -5,10 +5,9 @@ export default class DrawingServer {
 	async retryUntilSuccess(url, body) {
 		let response
 		do {
-			response = await (await fetch(url, body))
+			response = await fetch(url, body)
 			if (response.status != 200) console.warn('retrying', {url, body})
-		}
-		while (response.status != 200)
+		} while (response.status != 200)
 
 		return response
 	}
