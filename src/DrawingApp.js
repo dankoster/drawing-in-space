@@ -55,7 +55,7 @@ export default class DrawingApp extends React.Component {
       // points in one flat array.
       if (this.state.justStarted && this.state.points.length > 0) {
         newPoints.push({
-		  id: this.pointId++,
+          id: this.pointId++,
           x: null,
           y: null,
           isEndOfSegment: true,
@@ -64,7 +64,7 @@ export default class DrawingApp extends React.Component {
 
       // Append a new point to the array
       const newPoint = {
-		id: this.pointId++,
+        id: this.pointId++,
         x: ev.nativeEvent.offsetX,
         y: ev.nativeEvent.offsetY,
         isEndOfSegment: false,
@@ -85,7 +85,7 @@ export default class DrawingApp extends React.Component {
 
   reset() {
     this.setState({ points: [], confirmedPoints: [], justStarted: true });
-	this.pointId = 0
+    this.pointId = 0
     this.state.server.reset();
   }
 
@@ -93,9 +93,9 @@ export default class DrawingApp extends React.Component {
     this.state.server
       .getPoints()
       .then((confirmedPoints) => {
-		  //make sure the points are sorted into the correct order
-		  confirmedPoints.sort((a, b) => a.id - b.id)
-		  this.pointId = confirmedPoints.length
+        //make sure the points are sorted into the correct order
+        confirmedPoints.sort((a, b) => a.id - b.id)
+        this.pointId = confirmedPoints.length
         this.setState({ points: confirmedPoints, confirmedPoints });
       })
       .catch((error) => {
